@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 void main() {
@@ -7,26 +6,25 @@ void main() {
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
-  
+
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  
   double balance = 500;
   void addMoney() {
-      balance += 500;
-      print(balance);
+    balance += 500;
+    print(balance);
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData.dark(useMaterial3: true),
       home: Scaffold(
         appBar: AppBar(
-          title: Text("Billionaire App!"),
+          title: Text("Billionaire11111111 App!"),
           centerTitle: true,
           titleTextStyle: TextStyle(fontSize: 20),
         ),
