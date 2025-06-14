@@ -1,6 +1,10 @@
+import 'package:billonaireapp/add_money_button.dart';
+import 'package:billonaireapp/balance_view.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // muon import j do le thi ctrl .
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
 
@@ -13,9 +17,35 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   double balance = 500;
-  void addMoney() {
-    balance += 500;
-    print(balance);
+  void addMoney() async {
+    setState(() {
+      // sử dụng để thay đổi trạng thái
+      balance += 500;
+    });
+    final SharedPreferences prefs =
+        await SharedPreferences.getInstance(); // khúc này còn sai vì nếu dùng await thì hàm phải có async
+
+    // Save an double value to 'decimal' key.
+    await prefs.setDouble('balance', balance);
+  }
+
+  // này xài để lưu dữ liệu sau khi thay đổi luôn
+  @override
+  void initState() {
+    super.initState();
+    loadBalance();
+  }
+
+  // Obtain shared preferences.
+  void loadBalance() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Save an double value to 'decimal' key.
+    setState(() {
+      balance =
+          prefs.getDouble('balance') ??
+          0; //giá trị ban đầu là null mà double không chấp nhận null nên phải thêm fallback value bằng ? //nếu get value thì ko cần await
+    });
   }
 
   @override
@@ -24,7 +54,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData.dark(useMaterial3: true),
       home: Scaffold(
         appBar: AppBar(
-          title: Text("Billionaire11111111 App!"),
+          title: Text("Billionaire App!"),
           centerTitle: true,
           titleTextStyle: TextStyle(fontSize: 20),
         ),
@@ -60,33 +90,10 @@ class _MyAppState extends State<MyApp> {
                   ),
                 ],
               ),
-              Expanded(
-                flex: 9,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("Balance Part"),
-                    SizedBox(height: 20),
-                    Text("$balance"),
-                  ],
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: ElevatedButton(
-                  //có 3 loại button elevated,text,outlined,
-                  onPressed: addMoney,
-                  child: Text("Add Money"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red[700],
-                    minimumSize: Size(
-                      double
-                          .infinity, //thằng double infinity này thấy xài nhiều cho chiều rộng
-                      0,
-                    ),
-                  ),
-                ),
-              ),
+              BalanceView(balance: balance),
+              AddMoneyButton(
+                addMoneyFunction: addMoney,
+              ), //để sử dụng function của thg con thì phải cho thg con kế thừa r gọi ra
             ],
           ),
         ),
